@@ -33,13 +33,8 @@ def get_response(prompt_text):
         return f"Error: {e}"
 
 
-def main():
-    print("ChatGPT CLI. Type 'exit' or 'quit' to end.")
-
-    while True:
-        prompt = input("> ")
-        if prompt.lower() in ["exit", "quit"]:
-            print(f"""
+def print_conversation_summary():
+    print(f"""
 --------------------------------------------------
 Conversation Summary:
 --------------------------------------------------
@@ -52,11 +47,28 @@ Total Cost: {calculate_token_cost(token_usage['total_tokens'])}
 Goodbye!
                   """)
 
-            sys.exit()
+
+def exit_gracefully():
+    print_conversation_summary()
+    sys.exit(0)
+
+
+def main():
+    print("ChatGPT CLI. Type 'exit' or 'quit' to end.")
+
+    while True:
+        prompt = input("> ")
+        if prompt.lower() in ["exit", "quit"]:
+            exit_gracefully()
 
         response = get_response(prompt)
         print("CLIppity: ", response + "\n")
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        exit_gracefully()
+    except EOFError:
+        exit_gracefully()
